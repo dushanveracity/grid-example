@@ -1,5 +1,5 @@
-<div class="flex flex-col p-4">
-  <div class="flex items-center justify-between px-6">
+<div class="flex flex-col mx-10 my-4">
+  <div class="flex items-center justify-between">
     <div class="flex items-center">
       <div class="flex items-center mx-1">
         <label for="X">Rows : </label>
@@ -32,21 +32,21 @@
     <div>
       <select
         class="border px-2 py-1 rounded mx-1"
-        (change)="changePanel($event)"
+        (change)="changePanel()"
         [(ngModel)]="selectedPanel"
       >
         <option value="undefined">-Select-</option>
-        <option *ngFor="let panel of panels" [value]="panel | json">
+        <option *ngFor="let panel of panels" [ngValue]="panel">
           {{ panel.model + " - " + panel.power + "W" }}
         </option>
       </select>
       <select
         class="border px-2 py-1 rounded mx-1"
-        (change)="changeString($event)"
+        (change)="changeString()"
         [(ngModel)]="selectedString"
       >
         <option value="undefined">-Select-</option>
-        <option *ngFor="let string of strings" [value]="string | json">
+        <option *ngFor="let string of strings" [ngValue]="string">
           {{ string.name }}
         </option>
       </select>
@@ -55,7 +55,7 @@
   <div
     (mousedown)="onMouseDown($event)"
     (mouseup)="onMouseUp($event)"
-    class="p-6 gap-5 w-max"
+    class="p-7 gap-5 w-max my-1"
     style="display: grid"
     [style.grid-template-columns]="gridLayoutStyle()"
   >
@@ -68,45 +68,60 @@
       [style.background]="item.string?.color"
       (click)="onClick($event, item)"
       (mousemove)="onMouseMove(item)"
+      (mouseover)="hoverOptions(item.row, item.col)"
     >
       <div
-        *ngIf="item.row === 1"
-        class="absolute -top-6 left-16 flex flex-row items-center"
+        [@fadeInOut]
+        *ngIf="item.row === 1 && hoveringCol === item.col"
+        class="absolute -top-6 left-16 flex flex-row items-center duration-200"
       >
         <button
           (click)="addColumnLeft(item.col)"
-          class="w-5 h-5 text-xs rounded-full border"
+          class="w-5 h-5 text-xs rounded-full border-2 hover:bg-blue-100 duration-200"
         >
           &larr;
         </button>
-        <button class="w-5 h-5 text-xs rounded-full border">-</button>
+        <button
+          (click)="deleteColumn(item.col)"
+          class="w-5 h-5 text-xs rounded-full border-2 hover:bg-blue-100 duration-200 mx-1"
+        >
+          -
+        </button>
         <button
           (click)="addColumnRight(item.col)"
-          class="w-5 h-5 text-xs rounded-full border"
+          class="w-5 h-5 text-xs rounded-full border-2 hover:bg-blue-100 duration-200"
         >
           &rarr;
         </button>
       </div>
       <div
-        *ngIf="item.col === 1"
-        class="absolute -left-6 top-10 flex flex-col items-center"
+        [@fadeInOut]
+        *ngIf="item.col === 1 && hoveringRow === item.row"
+        class="absolute -left-6 top-10 flex flex-col items-center duration-200"
       >
         <button
           (click)="addRowAbove(item.row)"
-          class="w-5 h-5 text-xs rounded-full border"
+          class="w-5 h-5 text-xs rounded-full border-2 hover:bg-blue-100 duration-200"
         >
           &uarr;
         </button>
-        <button class="w-5 h-5 text-xs rounded-full border">-</button>
+        <button
+          (click)="deleteRow(item.row)"
+          class="w-5 h-5 text-xs rounded-full border-2 hover:bg-blue-100 duration-200 my-1"
+        >
+          -
+        </button>
         <button
           (click)="addRowBelow(item.row)"
-          class="w-5 h-5 text-xs rounded-full border"
+          class="w-5 h-5 text-xs rounded-full border-2 hover:bg-blue-100 duration-200"
         >
           &darr;
         </button>
       </div>
       <p class="font-semibold">{{ item.string?.name }}</p>
-      <p class="font-semibold" *ngIf="item.panel">{{ item.panel?.model + ' - ' + item.panel?.power + 'W' }}</p>
+      <p class="font-semibold" *ngIf="item.panel">
+        {{ item.panel?.model + " - " + item.panel?.power + "W" }}
+      </p>
     </button>
   </div>
 </div>
